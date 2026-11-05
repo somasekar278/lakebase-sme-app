@@ -1,0 +1,19 @@
+export type Role = 'Portfolio admin' | 'SME' | 'Leadership viewer' | 'Account contributor';
+export type Coverage = 'SME-led' | 'Tiger Team-led' | 'Joint' | 'Unassigned';
+export type Health = 'Green' | 'Amber' | 'Red' | 'Unknown';
+export type Movement = 'Advanced' | 'Unchanged' | 'Stalled' | 'Regressed' | 'Unknown';
+export const themes = ['Region availability','Networking / private connectivity','Product capability','Performance / scale','Security / governance','Pricing / commercial','Customer readiness / resourcing','Other'] as const;
+export interface User { id: string; name: string; role: Role }
+export interface Blocker { id: string; theme: string; description: string; owner: string; openedAt: string; status: 'Open'|'Resolved'; resolvedAt?: string; reference?: string; externalStatus: 'Not verified' }
+export interface Intervention { id: string; problem: string; sme: string; plan: string; outcome: string; status: 'Planned'|'In progress'|'Complete'; date: string; observed?: string; evidence?: string }
+export interface Response { id: string; respondent: string; date: string; text: string; source: string; sourceUrl?: string; capturedBy: string; capturedAt: string; onBehalf: boolean; revisionOf?: string; reviewed: boolean }
+export interface Ask { id: string; caseId: string; request: string; why: string; consequence: string; owner: string; decisionMaker: string; due: string; status: 'Open'|'Accepted'|'Resolved'|'Withdrawn'; resolution?: string }
+export interface FollowUp { id: string; caseId: string; title: string; owner: string; due: string; status: 'Open'|'Complete'; type: string; nudgedAt?: string }
+export interface Handover { id: string; caseId: string; to: Coverage; receiver: string; reason: string; summary: string; continuingRole: string; due: string; status: 'Proposed'|'Acknowledged'|'Complete'; acknowledgedAt?: string }
+export interface Activity { id: string; caseId: string; actor: string; at: string; type: string; text: string; responseId?: string }
+export interface AuditEvent { id: string; caseId: string; actor: string; at: string; type: string; source: 'User'|'Import'|'Salesforce sync'; before: unknown; after: unknown }
+export interface UseCase { id: string; accountId: string; account: string; name: string; salesforceId: string; region: string; stage: string; stageChangedAt: string; ae: string; sa: string; sme: string; followers: string[]; coverageOverride?: Coverage; tigerContact: string; coverageEffectiveAt: string; why: string; inclusion: string; assessment: string; health: Health; healthRationale: string; movement: Movement; evidence: string; milestone: string; milestoneOwner: string; milestoneDue: string; lastUpdate: string | null; confirmedAt?: string; nextUpdate: string; cadence: number; archived: boolean; archiveReason?: string; blockers: Blocker[]; interventions: Intervention[]; responses: Response[]; commercial?: { actual: number|null; estimate: number|null; currency: string; source: string; asOf: string } }
+export interface Snapshot { period: string; cases: { id: string; stage: string; health: Health; openBlockers: string[]; coverage: Coverage }[]; completedHandovers: number }
+export interface SourceRecord { salesforceId: string; account: string; name: string; region: string; stage: string; ae: string; sa: string }
+export interface Database { version: number; cases: UseCase[]; asks: Ask[]; followUps: FollowUp[]; handovers: Handover[]; activities: Activity[]; audit: AuditEvent[]; snapshots: Snapshot[]; accountCoverage: Record<string,Coverage>; cadence: number; staleDays: number; sync: { status: 'Demo snapshot'|'Failed'; lastSuccess: string; error?: string }; notifications: { id:string; user:string; text:string; at:string }[] }
+export interface Filters { search: string; region: string; sme: string; ae: string; sa: string; stage: string; health: string; movement: string; theme: string; coverage: string; pulse: string }
