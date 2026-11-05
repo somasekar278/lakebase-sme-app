@@ -14,6 +14,10 @@ npm run typecheck
 npm test
 ```
 
+### Updating from the original Tailwind version
+
+Download the latest ZIP from GitHub and extract it into a **new folder**, or run `git pull` if you cloned the repository. Then run `npm ci` followed by `npm run dev`. Do not reuse the older ZIP's package manifest or lockfile. Tailwind, its Vite plugin, and `tailwind-merge` have been removed; the layout is implemented in plain CSS. This change removes the dependency that was blocked by the corporate registry; it does not change registry settings or bypass security controls. Other dependencies still require approval by your package registry. If installation fails, resolve that error before running the dev server; a partial install can leave Vite unavailable.
+
 Vite serves on port 5173. Production assets are generated in `dist`. Use `npm run dev -- --port 5174` if necessary. Existing cloud tasks are isolated; use this checkout without creating a worktree.
 
 Browser checks use Playwright and the environment's `/usr/bin/chromium`:
@@ -43,9 +47,9 @@ The layout prioritises clear hierarchy, grouped controls, readable dense tables,
 - `src/services/hub.ts`: `HubService`, discriminated `Command` union, query helpers, role checks and mock command handling. Components never read or write localStorage.
 - `src/services/index.ts`: composition root; injects browser storage into the mock service. Replace this export with an HTTP implementation of `HubService`.
 - `src/services/seed.ts`: deterministic 14-case seed, fictional source catalogue, historical reporting snapshot and role fixtures.
-- `src/components/ui`: shadcn/ui-style Button (CVA, Slot, Tailwind) and accessible Radix-based dialog/drawer primitives, maintained locally.
+- `src/components/ui`: shadcn/ui-style Button API (CVA, Slot, plain CSS) and accessible Radix-based dialog/drawer primitives, maintained locally.
 - `src/App.tsx`: screens, global query state, detail tabs, forms and intake flow.
-- `src/styles.css`: responsive layout and appearance using Tailwind CSS v4 and semantic layout classes.
+- `src/styles.css`: responsive layout and appearance using plain CSS and semantic layout classes. There is no Tailwind dependency or CSS-framework build plugin. The locally maintained UI primitives retain their component API; the Tailwind-dependent shadcn CLI configuration has been removed.
 
 The mock stores one versioned database document under `lakebase-sme-demo-v1`. Commands are serialized and committed with a single storage write, with audit entries and user-facing activity produced by the service. A failed command leaves persisted state unchanged. Quota failures surface as errors; no unsaved success is reported. Persistence is browser/origin-local, not cross-device or multi-user. Demo role selection and temporary UI filters do not persist.
 
